@@ -1,8 +1,8 @@
 import numpy as np
 
 f = open("input_08.txt").read().split()
-
-forest = np.zeros((99,99))
+s = len(f)
+forest = np.zeros((s,s))
 
 for y,line in enumerate(f):
     for x,tree in enumerate(line):
@@ -22,8 +22,8 @@ def isvisible(x,y):
 
 viscounter = 0
 
-for x in range(99):
-    for y in range(99):
+for x in range(s):
+    for y in range(s):
         if isvisible(x,y):
             viscounter += 1
 
