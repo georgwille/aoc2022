@@ -3,7 +3,7 @@ import heapq
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('input_12.txt') as fin:
+with open('input_12_jan.txt') as fin:
     m = {}
     for x,line in enumerate(fin):
         for y,char in enumerate(line.strip()):
@@ -17,9 +17,9 @@ with open('input_12.txt') as fin:
 
 xmax = x
 ymax = y
-map_ = np.zeros((xmax,ymax))
-for x in range(xmax):
-    for y in range(ymax):
+map_ = np.zeros((xmax+1,ymax+1))
+for x in range(xmax+1):
+    for y in range(ymax+1):
         map_[x,y] = m[(x,y)]
 
 plt.imshow(map_)
