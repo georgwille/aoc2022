@@ -1,5 +1,3 @@
-from functools import cmp_to_key
-
 fin = open("input_13.txt").read().strip().split('\n')
 fin = [eval(line) for line in fin if line]
 
@@ -42,10 +40,23 @@ for i in range(0,len(fin),2):
 print(correctsum)
 
 sep1 = [[2]]
+sep1index = 1
+
 sep2 = [[6]]
+sep2index = 2
 
-fin.append(sep1)
-fin.append(sep2)
+for elem in fin:
+    if compare(elem,sep1) == -1:
+        sep1index += 1
+        sep2index += 1
+        continue
+    if compare(elem,sep2) == -1:
+        sep2index += 1
 
-fin.sort(key=cmp_to_key(compare))
-print((fin.index(sep1)+1)*(fin.index(sep2)+1))
+print(sep1index*sep2index)
+
+# from functools import cmp_to_key
+# fin.append(sep1)
+# fin.append(sep2)
+# fin.sort(key=cmp_to_key(compare))
+# print((fin.index(sep1)+1)*(fin.index(sep2)+1))
