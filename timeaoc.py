@@ -26,7 +26,10 @@ except:
     rounds = 20
 
 print("Discarding startup round")
+starttime = time.perf_counter()
 exec(scommand)
+runtime = time.perf_counter()-starttime
+print(f"{runtime:.6f}")
 print("Startup round discarded\n")
 
 for _ in range(rounds):
