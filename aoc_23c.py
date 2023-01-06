@@ -13,11 +13,12 @@ for row, line in enumerate(fin):
         if char == '#':
             elves.add((row, col))
 
-
 def has_no_neighbors(pos):
-    c = sum((pos[0]+dr, pos[1]+dc) in elves for dc in [-1, 0, 1]
-            for dr in [-1, 0, 1])
-    return c == 1
+    for dc in [-1,0,1]:
+        for dr in [-1,0,1]:
+            if (dr or dc) and (pos[0]+dr, pos[1]+dc) in elves:
+                return False
+    return True
 
 def dir_is_clear(pos,dir_):
     for test in checkdir[dir_]:
@@ -45,9 +46,11 @@ def print_elves():
 haschanged = True
 cyclecount = 0
 
+prop_pos = {}
+
 while haschanged:
     haschanged = False
-    prop_pos = {}
+    prop_pos.clear()
     for elf in elves:
         if has_no_neighbors(elf):
             continue
