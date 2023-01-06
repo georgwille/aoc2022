@@ -68,31 +68,31 @@ allheights = {} # tiles:height
 cycles = {} # cycle: (height, checksum)
 all_checksums = {} # checksum:cycle where it occured
 
-for m in range(10**6):
-    if not m%1000:
-        print("cycle:", m)
-        tempchamber = {el for el in chamber if el[1] > highest - 500}
-        chamber = tempchamber
-    cur_tile = move_tile(next(tilesource), (2, highest + 4))
-    falling = True
+for m in range(1000):
+    print("cycle:", m)
+    tempchamber = {el for el in chamber if el[1] > highest - 500}
+    chamber = tempchamber
+    for tilecount in range(5 * len(wind)):
+        cur_tile = move_tile(next(tilesource), (2, highest + 4))
+        falling = True
 
-    while falling:
+        while falling:
+            # print_chamber()
+            cur_wind = next(wind_d)
+            cand = move_tile(cur_tile, (cur_wind, 0))
+            if not overlap(cand):
+                cur_tile = cand
+            cand = move_tile(cur_tile, (0, -1))
+            if overlap(cand):
+                falling = False
+                break
+            else:
+                cur_tile = cand
+
+        chamber.update(cur_tile)
+        highest = max(max([y for (x, y) in cur_tile]), highest)
+        allheights[m*5*len(wind)+tilecount] = highest
         # print_chamber()
-        cur_wind = next(wind_d)
-        cand = move_tile(cur_tile, (cur_wind, 0))
-        if not overlap(cand):
-            cur_tile = cand
-        cand = move_tile(cur_tile, (0, -1))
-        if overlap(cand):
-            falling = False
-            break
-        else:
-            cur_tile = cand
-
-    chamber.update(cur_tile)
-    highest = max(max([y for (x, y) in cur_tile]), highest)
-    allheights[m] = highest
-    # print_chamber()
     # print(highest)
     # print_chamber(30)
     cs = checksum(30)
@@ -104,8 +104,8 @@ for m in range(10**6):
         mc = m-all_checksums[cs]
         height_per_megacycle = cycles[m][0] - cycles[all_checksums[cs]][0]
         print(f"{height_per_megacycle=}")
-        no_of_mc = 10**12 // mc # - 1
-        remains = 10**12 % mc # + mc*5*len(wind)
+        no_of_mc = 10**12 // (mc*5*len(wind)) # - 1
+        remains = 10**12 % (mc*5*len(wind)) # + mc*5*len(wind)
         # print(allheights)
         answer = no_of_mc * height_per_megacycle + allheights[remains-1]
         print("Height after 10**12 blocks:", answer)
