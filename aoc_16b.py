@@ -1,4 +1,4 @@
-fin = open("input_16_sample.txt").read().strip().split('\n')
+fin = open("input_16.txt").read().strip().split('\n')
 
 valves = set()
 cvalves = set()
@@ -26,7 +26,8 @@ def search(pos, closed_valves, time_remaining, elephant=False):
     score_open_this = 0
     score_elephant = 0
     # If I stopped here, what score could the elephant get with the valves that are still open?
-    if not elephant:
+    # if not elephant:
+    if not elephant and len(closed_valves) < 9: # a bit crude, but it works: much faster
         score_elephant = search('AA', closed_valves.copy(), 26, elephant=True)
     # do nothing
     if time_remaining and closed_valves:
