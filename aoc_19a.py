@@ -32,6 +32,7 @@ def solve(r, o_r, c_r, s_r, g_r, o, c, s, g, t):
     TODO = deque()
     TODO.append(state)
     DONE = set()
+    OPT = {}
     while TODO:
         this_state = TODO.pop()
         if this_state in DONE:
@@ -39,6 +40,17 @@ def solve(r, o_r, c_r, s_r, g_r, o, c, s, g, t):
             continue
         o_r, c_r, s_r, g_r, o, c, s, g, t = this_state
         DONE.add(this_state)
+
+        # idea from Jan: store state without time in separate dict with
+        # the earliest time this state was reached. This will
+        # then replace all later occurences because those cannot be
+        # part of the optimal solution
+
+        if (o_r, c_r, s_r, g_r, o) in OPT:
+            if OPT[(o_r, c_r, s_r, g_r, o)] > t:
+                continue
+
+        OPT[(o_r, c_r, s_r, g_r, o)] = t
 
         if t == 0:
             continue

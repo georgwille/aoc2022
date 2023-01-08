@@ -28,14 +28,35 @@ def solve(r, o_r, c_r, s_r, g_r, o, c, s, g, t):
     max_geodes = 0
     state = (o_r, c_r, s_r, g_r, o, c, s, g, t)
     max_ore_cost = max(r.gr_o, r.cr_o, r.sr_o, r.gr_o)
-    TODO = deque()
-    TODO.append(state)
+    TODO = set()
+    TODO.add(state)
     DONE = set()
+    OPT = {}
+    hitcounter = misscounter = 0
+    opthitcounter = optmisscounter = 0
     while TODO:
         this_state = TODO.pop()
         if this_state in DONE:
+            hitcounter += 1
             continue
+        else:
+            misscounter += 1
         o_r, c_r, s_r, g_r, o, c, s, g, t = this_state
+        DONE.add(this_state)
+
+        # idea from Jan: store state without time in separate dict with
+        # the earliest time this state was reached. This will
+        # then replace all later occurences because those cannot be
+        # part of the optimal solution
+
+        if (o_r, c_r, s_r, g_r, o) in OPT:
+            if OPT[(o_r, c_r, s_r, g_r, o)] > t:
+                opthitcounter += 1
+                continue
+            else:
+                optmisscounter += 1
+
+        OPT[(o_r, c_r, s_r, g_r, o)] = t
 
         if t == 0:
             continue
@@ -52,31 +73,29 @@ def solve(r, o_r, c_r, s_r, g_r, o, c, s, g, t):
         # cap obsidian
         s = min(s, t*r.gr_s - s_r*(t-1))
 
-        DONE.add(this_state)
-        # if g == max_geodes:
-        #     print(this_state)
-
         # geode robots - always produce
         if o >= r.gr_o and s >= r.gr_s:
-            TODO.append((o_r, c_r, s_r, g_r+1, o+o_r-r.gr_o, c+c_r, s+s_r-r.gr_s, g+g_r, t-1))
+            TODO.add((o_r, c_r, s_r, g_r+1, o+o_r-r.gr_o, c+c_r, s+s_r-r.gr_s, g+g_r, t-1))
 
         # obsidian robots
         if o >= r.sr_o and c >= r.sr_c and s_r < r.gr_s:
-            TODO.append((o_r, c_r, s_r+1, g_r, o+o_r-r.sr_o, c+c_r-r.sr_c, s+s_r, g+g_r, t-1))
+            TODO.add((o_r, c_r, s_r+1, g_r, o+o_r-r.sr_o, c+c_r-r.sr_c, s+s_r, g+g_r, t-1))
 
         # clay robots
         if o >= r.cr_o and c_r < r.sr_c:
-            TODO.append((o_r, c_r+1, s_r, g_r, o+o_r-r.cr_o, c+c_r, s+s_r, g+g_r, t-1))
+            TODO.add((o_r, c_r+1, s_r, g_r, o+o_r-r.cr_o, c+c_r, s+s_r, g+g_r, t-1))
 
         # ore robots
         if o >= r.or_o and o_r < max_ore_cost:
-            TODO.append((o_r+1, c_r, s_r, g_r, o+o_r-r.or_o, c+c_r, s+s_r, g+g_r, t-1))
+            TODO.add((o_r+1, c_r, s_r, g_r, o+o_r-r.or_o, c+c_r, s+s_r, g+g_r, t-1))
 
         # only collect resources
-        TODO.append((o_r, c_r, s_r, g_r, o+o_r, c+c_r, s+s_r, g+g_r, t-1))
+        TODO.add((o_r, c_r, s_r, g_r, o+o_r, c+c_r, s+s_r, g+g_r, t-1))
 
         max_geodes = max(max_geodes, g+g_r)
 
+    print(f"{hitcounter=}, {misscounter=}")
+    print(f"{opthitcounter=}, {optmisscounter=}")
     return max_geodes
 
 
